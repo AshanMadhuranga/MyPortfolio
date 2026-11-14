@@ -1,0 +1,455 @@
+
+.journey-track {
+  height: calc(var(--journey-distance) * 5 + 30svh);
+}
+
+.terminal-marker {
+  position: absolute;
+  top: calc(var(--journey-distance) * 5);
+  height: 1px;
+  width: 1px;
+  pointer-events: none;
+}
+
+/* ==========================================
+   TERMINAL PANEL
+   ========================================== */
+
+.terminal-panel {
+  position: absolute;
+  left: 5%;
+  top: 15%;
+  width: min(510px, 43%);
+  max-height: calc(85svh - 100px);
+  overflow-y: auto;
+  padding: 3px 8px 10px 0;
+  z-index: 2;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .45s;
+  scrollbar-width: thin;
+}
+
+.world-frame[data-stage=terminal] .terminal-panel {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.terminal-panel h1 {
+  font: 650 clamp(30px, 3vw, 42px)/1.12 Manrope, sans-serif;
+  letter-spacing: -1.8px;
+  color: #735287;
+  margin: 14px 0 10px;
+}
+
+.terminal-subtitle {
+  font-size: 13px;
+  color: #665074;
+  margin: 0 0 9px;
+}
+
+.terminal-description {
+  font-size: 11px;
+  line-height: 1.75;
+  color: #594a66;
+  margin: 0 0 18px;
+  max-width: 420px;
+}
+
+/* ==========================================
+   TERMINAL WINDOW
+   ========================================== */
+
+.terminal-window {
+  --term-bg: #eee3f5;
+  --term-ink: #392c4d;
+  --term-muted: #645173;
+  --term-accent: #713893;
+  --term-line: #c5a6d9;
+  --term-toolbar: #e3d2ef;
+
+  background: var(--term-bg);
+  color: var(--term-ink);
+  border: 1px solid var(--term-line);
+  border-radius: 14px;
+  box-shadow: 0 15px 45px #67507c20;
+  overflow: hidden;
+}
+
+.terminal-window[data-theme=midnight] {
+  --term-bg: #251b36;
+  --term-ink: #eee4ff;
+  --term-muted: #c2afdb;
+  --term-accent: #9fe5e1;
+  --term-line: #82649e;
+  --term-toolbar: #372744;
+  box-shadow: 0 0 24px #b887d72b;
+}
+
+/* ==========================================
+   TOOLBAR
+   ========================================== */
+
+.terminal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px 4px 14px;
+  background: var(--term-toolbar);
+  border-bottom: 1px solid var(--term-line);
+  font-size: 11px;
+}
+
+.terminal-toolbar > span,
+.terminal-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-toolbar button {
+  background: none;
+  color: var(--term-ink);
+  min-width: 36px;
+  min-height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+}
+
+/* ==========================================
+   TERMINAL OUTPUT
+   ========================================== */
+
+.terminal-output {
+  height: clamp(145px, 24svh, 235px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 15px;
+  scrollbar-width: thin;
+  font: 12px/1.65 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.terminal-entry {
+  margin-bottom: 15px;
+}
+
+.terminal-entry:last-child {
+  margin-bottom: 0;
+}
+
+.terminal-entry pre {
+  font: inherit;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal-command-line {
+  margin: 0 0 5px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal-command-line span {
+  color: var(--term-accent);
+}
+
+.terminal-entry.is-error pre {
+  font-weight: 600;
+}
+
+/* ==========================================
+   COMMAND INPUT
+   ========================================== */
+
+.terminal-prompt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 9px 4px 12px;
+  border-top: 1px solid var(--term-line);
+  font: 12px ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.terminal-prompt label {
+  color: var(--term-accent);
+  white-space: nowrap;
+}
+
+.terminal-prompt input {
+  width: 0;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  color: var(--term-ink);
+  background: transparent;
+  min-height: 42px;
+  font: inherit;
+  outline-offset: 0;
+}
+
+.terminal-prompt button {
+  background: var(--term-toolbar);
+  color: var(--term-accent);
+  border-radius: 7px;
+  min-width: 42px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+}
+
+/* ==========================================
+   QUICK COMMANDS
+   ========================================== */
+
+.terminal-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 5px 10px;
+}
+
+.terminal-suggestions button {
+  font: 11px ui-monospace, monospace;
+  background: var(--term-toolbar);
+  color: var(--term-ink);
+  padding: 0 9px;
+  min-height: 36px;
+  border-radius: 6px;
+}
+
+.terminal-hint {
+  font-size: 9px;
+  color: var(--term-muted);
+  margin: 4px 12px 11px;
+}
+
+.terminal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.terminal-actions button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  background: none;
+  border-bottom: 1px solid #b19abd;
+  padding: 7px 0;
+  color: #594366;
+}
+
+.terminal-window :focus-visible {
+  outline: 2px solid var(--term-accent);
+  outline-offset: -2px;
+}
+
+/* ==========================================
+   RESPONSIVE BREAKPOINTS
+   ========================================== */
+
+@media (min-width: 761px) and (max-height: 800px) {
+  .terminal-panel {
+    top: 14%;
+  }
+
+  .terminal-panel h1 {
+    font-size: 32px;
+    margin-top: 10px;
+  }
+
+  .terminal-description {
+    margin-bottom: 12px;
+    font-size: 10px;
+  }
+
+  .terminal-output {
+    height: 160px;
+  }
+
+  .terminal-hint {
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 761px) {
+  .terminal-panel {
+    left: 4%;
+    width: 45%;
+  }
+
+  .terminal-prompt {
+    font-size: 11px;
+  }
+
+  .terminal-suggestions button {
+    padding: 0 7px;
+  }
+
+  .terminal-panel h1 {
+    font-size: 32px;
+  }
+}
+
+/* ==========================================
+   MOBILE LAYOUT
+   ========================================== */
+
+@media (max-width: 760px) {
+  .world-frame[data-stage=terminal] {
+    grid-template-rows: 76px 440px minmax(180px, 1fr) 94px;
+  }
+
+  .world-frame[data-stage=terminal] .hero {
+    display: none;
+  }
+
+  .terminal-panel {
+    position: relative;
+    grid-row: 2;
+    grid-column: 1;
+    top: auto;
+    left: auto;
+    width: auto;
+    margin: 4px 5% 0;
+    padding: 0 3px 8px;
+    max-height: 432px;
+    display: none;
+  }
+
+  .world-frame[data-stage=terminal] .terminal-panel {
+    display: block;
+  }
+
+  .terminal-panel h1 {
+    font-size: 29px;
+    margin: 10px 0 6px;
+  }
+
+  .terminal-subtitle {
+    font-size: 11px;
+  }
+
+  .terminal-description {
+    font-size: 10px;
+    line-height: 1.55;
+    margin: 0 0 10px;
+  }
+
+  .terminal-output {
+    height: 110px;
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .terminal-toolbar {
+    font-size: 10px;
+  }
+
+  .terminal-toolbar button {
+    min-height: 32px;
+    min-width: 36px;
+  }
+
+  .terminal-prompt {
+    gap: 5px;
+    padding-left: 8px;
+    font-size: 10px;
+  }
+
+  .terminal-prompt input {
+    font-size: 16px;
+  }
+
+  .terminal-suggestions {
+    gap: 4px;
+    padding: 4px 6px;
+  }
+
+  .terminal-suggestions button {
+    font-size: 10px;
+    padding: 0 7px;
+    min-height: 44px;
+  }
+
+  .terminal-hint {
+    display: none;
+  }
+
+  .terminal-actions {
+    margin-top: 6px;
+  }
+
+  .terminal-actions button {
+    font-size: 9px;
+    min-height: 36px;
+  }
+
+  .world-frame[data-stage=terminal] .scene-wash {
+    background: linear-gradient(
+      180deg,
+      #eee4f2 0%,
+      #eee4f2 55%,
+      transparent 68%,
+      transparent 84%,
+      #e8d9ec 95%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-panel {
+    transition: none;
+  }
+}
+
+@media (max-width: 760px) and (max-height: 740px) {
+  .world-frame[data-stage=terminal] {
+    min-height: 548px;
+    top: 0;
+    grid-template-rows: 76px minmax(260px, 1fr) 130px 82px;
+  }
+
+  .terminal-panel {
+    max-height: calc(100% - 8px);
+  }
+
+  .terminal-description {
+    display: none;
+  }
+
+  .terminal-output {
+    height: 90px;
+  }
+}
+
+/* ==========================================
+   PHASE 8.5 — DESKTOP SCROLLBAR FIX
+   ========================================== */
+
+/*
+ * Desktop: remove the second scrollbar from the
+ * outer panel. Keep scrolling inside terminal output.
+ *
+ * Mobile: retain the existing scrollable panel.
+ */
+
+@media (min-width: 761px) {
+  .terminal-panel {
+    max-height: none;
+    overflow: visible;
+    scrollbar-width: none;
+  }
+
+  .terminal-output {
+    height: clamp(120px, 20svh, 200px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}

@@ -1,0 +1,58 @@
+/* One pinned world; the empty track is the scroll distance, not another scene. */
+.connected-world{position:relative;--journey-distance:190svh}
+.journey-track{height:220svh;pointer-events:none}
+.about-marker{position:absolute;top:var(--journey-distance);height:1px;width:1px;pointer-events:none}
+.connected-world .world-frame{position:sticky;top:0}
+.about-panel{position:absolute;z-index:2;top:18%;left:7%;width:min(385px,34%);pointer-events:none;visibility:hidden}
+.world-frame[data-stage=about] .about-panel{visibility:visible;pointer-events:auto}
+.about-panel h1{font-family:Manrope,sans-serif;font-size:clamp(36px,3.8vw,56px);font-weight:650;letter-spacing:-2.5px;line-height:1.12;margin:22px 0 10px;color:#735287}
+.about-subtitle{font-size:12px;color:#7b6289;line-height:1.7;margin:0 0 18px}
+.about-introduction{font-size:12px;color:#62566e;line-height:1.85;margin:0 0 22px}
+.about-areas{display:grid;gap:10px}
+.about-area{display:flex;align-items:flex-start;gap:12px;text-align:left;padding:13px 14px;background:#fcf1fac4;border:1px solid #ffffffb0;border-radius:10px;backdrop-filter:blur(12px);transition:background .2s,transform .2s}
+.about-area:hover{background:#fff3fd;transform:translateX(3px)}
+.about-area>span:last-child{flex:1;min-width:0}.about-area-icon{color:#9468a5;margin-top:2px}
+.about-area strong{display:block;font-size:12px;font-weight:600;margin-bottom:5px}
+.about-area-text{display:block;font-size:10px;line-height:1.7;color:#594666}
+.about-area small{display:flex;align-items:center;gap:6px;font-size:8px;color:#8a579e;margin-top:7px}
+.about-home{font-size:10px;background:none;border-bottom:1px solid #b19abd;padding:6px 0;margin-top:16px}
+.about-dialog ul{padding-left:18px;font-size:12px;line-height:2;color:#735c81;margin-bottom:24px}
+.travel-caption{position:absolute;z-index:2;left:50%;bottom:115px;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity .4s;pointer-events:none;background:#f6eaf08c;border:1px solid #fff7;border-radius:12px;padding:14px 25px;backdrop-filter:blur(10px)}
+.travel-caption span{font-size:8px;letter-spacing:2px;color:#846392}.travel-caption p{font-size:14px;margin:7px 0 0}
+.world-frame[data-stage=travel] .travel-caption{opacity:1}
+.world-frame:not([data-stage=home]) .world-caption{opacity:0}
+.world-frame[data-stage=travel] .scene-wash{opacity:.15;transition:opacity .6s}
+.scene-wash{transition:opacity .6s;pointer-events:none}
+.location-progress{position:absolute;bottom:0;left:0;width:var(--world-progress,0%);height:2px;background:#b180c8;max-width:100%}
+@media(min-width:761px) and (max-height:800px){
+  .about-panel{top:15%;width:min(375px,35%)}.about-panel h1{font-size:40px;margin-top:12px}
+  .about-subtitle{margin-bottom:10px}.about-introduction{margin-bottom:12px;font-size:11px}
+  .about-area{padding:9px 12px}.about-area-text{font-size:9px}.about-areas{gap:7px}
+}
+@media(max-width:760px){
+  .connected-world{--journey-distance:170svh}
+  .connected-world .world-frame{height:100svh;min-height:790px;top:min(0px,calc(100svh - 790px));grid-template-rows:76px 330px minmax(270px,1fr) 94px}
+  .connected-world .site-header{padding:16px 6%}.connected-world .hero{margin:12px 7% 0}
+  .connected-world .hero h1{font-size:clamp(42px,11vw,54px)}.connected-world .greeting{margin:12px 0 8px}
+  .connected-world .hero-description{font-size:11px;line-height:1.7;margin:13px 0 16px}
+  .connected-world .social-row{margin-top:10px}
+  .connected-world .scene{min-height:0;mask-image:linear-gradient(180deg,transparent,#000 6%,#000 94%,transparent)}
+  .connected-world .scene-wash{background:linear-gradient(180deg,#eee4f2 0%,#eee4f2 43%,transparent 57%,transparent 83%,#e8d9ec 95%)}
+  .connected-world .world-footer{margin-top:0;margin-bottom:14px;gap:6px;align-self:end}
+  .connected-world .location-label{bottom:111px;padding:8px 10px;max-width:calc(100% - 94px)}
+  .connected-world .location-label strong{font-size:10px}.connected-world .location-number{font-size:7px}
+  .connected-world .scene-controls{bottom:110px;gap:6px}.connected-world .scene-controls button{width:34px;height:34px}
+  .about-panel{position:relative;grid-row:2;grid-column:1;top:auto;left:auto;width:auto;margin:8px 6% 0;overflow-y:auto;overscroll-behavior:contain;padding:0 5px 12px;max-height:322px;scrollbar-width:thin;scrollbar-color:#ba97cc transparent;display:none}
+  .world-frame[data-stage=about] .about-panel{display:block}.world-frame[data-stage=about] .hero{display:none}
+  .about-panel h1{font-size:35px;letter-spacing:-1.5px;margin:12px 0 6px}
+  .about-subtitle{font-size:11px;margin-bottom:10px}.about-introduction{font-size:11px;line-height:1.75;margin-bottom:12px}
+  .about-area{padding:10px;gap:10px}.about-area-text{font-size:10px}.about-areas{gap:8px}.about-home{margin-top:12px}
+  .travel-caption{bottom:120px;width:max-content;max-width:80%;padding:10px 15px}.travel-caption p{font-size:12px}
+  .world-frame[data-stage=travel] .hero{pointer-events:none}
+}
+@media(prefers-reduced-motion:reduce){.travel-caption,.scene-wash,.about-area{transition:none}}
+
+@media(min-width:761px){.about-panel{max-height:calc(100svh - 220px);overflow-y:auto;padding-right:12px;scrollbar-width:thin;scrollbar-color:#ba97cc transparent}.about-area:focus-visible{outline:2px solid #8c5baa;outline-offset:3px}}
+
+.about-dialog{margin:auto;max-height:calc(100svh - 40px);overflow-y:auto}
+
