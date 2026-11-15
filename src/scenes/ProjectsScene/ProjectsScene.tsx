@@ -67,6 +67,16 @@ const materials = {
     emissive: '#cd7ae9',
     emissiveIntensity: 0.8,
   }),
+  emerald: new MeshStandardMaterial({
+    color: '#087a58',
+    roughness: 0.65,
+  }),
+  gold: new MeshStandardMaterial({
+    color: '#f0bd55',
+    emissive: '#c88a25',
+    emissiveIntensity: 0.25,
+    roughness: 0.45,
+  }),
 }
 
 function Block({
@@ -101,6 +111,7 @@ const locations: V[] = [
   [8.8, 2.1, -3.5],
   [8.4, 0.8, 4],
   [5, 3.2, -9],
+  [0, 0.8, 11],
 ]
 
 const shortTitles = [
@@ -110,6 +121,7 @@ const shortTitles = [
   'AI Clothing Shop',
   'AgeiosAI',
   'Food Mobile App',
+  'LandHub',
 ]
 
 // ======================================================
@@ -120,10 +132,16 @@ function ProjectSign({
   title,
   active,
   reduced,
+  accent = '#dca8ff',
+  accentDark = '#795396',
+  glowColor = '#a65cf5',
 }: {
   title: string
   active: boolean
   reduced: boolean
+  accent?: string
+  accentDark?: string
+  glowColor?: string
 }) {
   const group = useRef<Group>(null)
 
@@ -143,20 +161,20 @@ function ProjectSign({
     ctx.roundRect(24, 26, 2000, 460, 72)
     ctx.fill()
 
-    ctx.strokeStyle = '#dca8ff'
+    ctx.strokeStyle = accent
     ctx.lineWidth = 13
     ctx.stroke()
 
-    ctx.strokeStyle = '#795396'
+    ctx.strokeStyle = accentDark
     ctx.lineWidth = 5
     ctx.beginPath()
     ctx.roundRect(48, 50, 1952, 412, 56)
     ctx.stroke()
 
     const gradient = ctx.createLinearGradient(220, 0, 1828, 0)
-    gradient.addColorStop(0, '#9561be')
-    gradient.addColorStop(0.5, '#ffe1ff')
-    gradient.addColorStop(1, '#9561be')
+    gradient.addColorStop(0, accentDark)
+    gradient.addColorStop(0.5, accent)
+    gradient.addColorStop(1, accentDark)
 
     ctx.fillStyle = gradient
     ctx.fillRect(220, 78, 1608, 8)
@@ -171,13 +189,13 @@ function ProjectSign({
       fontSize -= 5
     }
 
-    ctx.shadowColor = '#a65cf5'
+    ctx.shadowColor = glowColor
     ctx.shadowBlur = 12
     ctx.fillStyle = '#ffffff'
     ctx.fillText(title, 1024, 275)
 
     ctx.shadowBlur = 0
-    ctx.fillStyle = '#e5baff'
+    ctx.fillStyle = accent
 
     for (let i = 0; i < 3; i++) {
       ctx.beginPath()
@@ -193,7 +211,7 @@ function ProjectSign({
     map.anisotropy = 8
 
     return map
-  }, [title])
+  }, [title, accent, accentDark, glowColor])
 
   useEffect(() => () => texture.dispose(), [texture])
 
@@ -472,6 +490,37 @@ function MobileMiniature() {
   )
 }
 
+function LandHubMiniature() {
+  return (
+    <group position={[0, 0.55, 0.7]}>
+      <Block p={[0, -0.1, 0]} s={[2.8, 0.18, 2]} m="emerald" />
+
+      {[-0.8, 0, 0.8].map(x => (
+        <Block
+          key={x}
+          p={[x, 0.02, 0]}
+          s={[0.035, 0.04, 1.8]}
+          m="gold"
+        />
+      ))}
+      {[-0.6, 0.35].map(z => (
+        <Block
+          key={z}
+          p={[0, 0.02, z]}
+          s={[2.6, 0.04, 0.035]}
+          m="gold"
+        />
+      ))}
+
+      <Block p={[-0.8, 0.3, -0.52]} s={[0.72, 0.58, 0.58]} m="dark" />
+      <Block p={[-0.8, 0.68, -0.52]} s={[0.88, 0.12, 0.72]} m="gold" />
+      <Block p={[-0.8, 0.27, -0.21]} s={[0.13, 0.35, 0.035]} m="window" />
+      <Block p={[0.8, 0.2, 0.65]} s={[0.6, 0.28, 0.55]} m="emerald" />
+      <Block p={[0.8, 0.37, 0.65]} s={[0.7, 0.06, 0.65]} m="gold" />
+    </group>
+  )
+}
+
 function ProjectMiniature({
   index,
   reduced,
@@ -490,8 +539,10 @@ function ProjectMiniature({
       return <ClothingMiniature />
     case 4:
       return <AIMiniature reduced={reduced} />
-    default:
+    case 5:
       return <MobileMiniature />
+    default:
+      return <LandHubMiniature />
   }
 }
 
@@ -522,6 +573,7 @@ function ProjectIsland({
 
   const project = projects[index]
   const active = interactive && (hover || selected)
+  const landHub = project?.id === 'landhub'
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.1)
@@ -619,8 +671,8 @@ function ProjectIsland({
       <mesh position={[0, 0.35, 0.7]}>
         <cylinderGeometry args={[1.5, 1.7, 0.22, 12]} />
         <meshStandardMaterial
-          color="#806097"
-          emissive="#8b4baa"
+          color={landHub ? '#087a58' : '#806097'}
+          emissive={landHub ? '#00a874' : '#8b4baa'}
           emissiveIntensity={active ? 0.65 : 0.2}
         />
       </mesh>
@@ -631,7 +683,7 @@ function ProjectIsland({
       >
         <ringGeometry args={[1.25, 1.31, 32]} />
         <meshBasicMaterial
-          color={active ? '#ffffff' : '#e9baff'}
+          color={active ? '#ffffff' : landHub ? '#f0bd55' : '#e9baff'}
           toneMapped={false}
           side={DoubleSide}
         />
@@ -649,6 +701,9 @@ function ProjectIsland({
             title={shortTitles[index] ?? project.title}
             active={active}
             reduced={reduced}
+            accent={landHub ? '#f0bd55' : undefined}
+            accentDark={landHub ? '#087a58' : undefined}
+            glowColor={landHub ? '#24cb8c' : undefined}
           />
         </group>
       </group>
