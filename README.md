@@ -86,9 +86,30 @@ For music, add your original or properly licensed track at `public/audio/ambient
 
 
 
-Home is the only implemented destination. Other navigation items and hero actions open a keyboard-accessible “next chapter” dialog, including Escape handling and native focus restoration. No fabricated CV or projects are included.
+Home, About, Skills, Projects, Journey, Terminal, and Contact are connected in the same interactive world. Project details and galleries are driven by the configured project data; external project links remain blank when none have been provided.
 
 
+
+## Project showcase images
+
+The Projects chapter uses the existing project-details dialog and gallery. All seven configured projects have three local WebP gallery images in `public/projects/`; paths in `src/config/projects.ts` are browser paths beginning with `/projects/`. Gallery concepts are marked with `concept: true` and described as illustrative artwork, not as screenshots of implemented systems. LandHub is an ongoing collaborative university project; individual contributions are not specified.
+
+Use these folder names, which match the existing project IDs:
+
+```text
+public/projects/
+	gym-management/
+	food-ordering-web/
+	ctms/
+	ai-clothing-shop/
+	ageios-ai/
+	food-ordering-mobile/
+	landhub/
+```
+
+Each project folder contains `cover.webp`, `showcase-2.webp`, and `showcase-3.webp`. To replace a concept with a genuine project screenshot, keep its configured path or update the matching `src` (and optional `thumbnail`) in `src/config/projects.ts`. Use descriptive `alt` text, mark portrait images with `portrait: true` when appropriate, and do not describe illustrative concept artwork as a verified application feature.
+
+Run `npm run dev` and inspect each project's gallery, then run `npm run build` before redeploying. This is a local asset workflow; visitor uploads are not supported.
 
 ## Motion and rendering
 
