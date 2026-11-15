@@ -70,6 +70,7 @@ export const milestones: Milestone[] = [
       'Web Development',
       'Problem Solving',
     ],
+    relatedProjects: ['landhub'],
     icon: 'code',
     theme: {
       color: '#b3e9ee',
