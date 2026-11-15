@@ -1,5 +1,6 @@
-﻿
+
 import { useEffect, useRef } from 'react'
+import { ProjectGallery } from './ProjectGallery'
 
 import {
   Dumbbell,
@@ -8,6 +9,7 @@ import {
   Shirt,
   BrainCircuit,
   Smartphone,
+  MapPinned,
   X,
   ArrowUpRight,
   type LucideIcon,
@@ -32,6 +34,7 @@ const projectIcons: Record<ProjectId, LucideIcon> = {
   'ai-clothing-shop': Shirt,
   'ageios-ai': BrainCircuit,
   'food-ordering-mobile': Smartphone,
+  landhub: MapPinned,
 }
 
 // ======================================================
@@ -70,9 +73,10 @@ export function ProjectsPanel({
       </p>
 
       <p className="skills-description">
-        Explore the real web applications,
-        AI-powered projects, and mobile
-        experiences I've developed.
+        Explore web applications, AI projects,
+        and mobile experiences I've worked on,
+        including a collaborative university
+        project.
       </p>
 
       <div className="project-selectors">
@@ -113,7 +117,6 @@ export function ProjectsPanel({
     </section>
   )
 }
-
 // ======================================================
 // PROJECT DETAILS DIALOG
 // ======================================================
@@ -146,11 +149,15 @@ export function ProjectDialog({
     const previous =
       document.activeElement as HTMLElement | null
 
+    const overflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+
     if (dialog && !dialog.open) {
       dialog.showModal()
     }
 
     return () => {
+      document.documentElement.style.overflow = overflow
       if (dialog?.open) {
         dialog.close()
       }
@@ -158,15 +165,16 @@ export function ProjectDialog({
       if (
         previous?.isConnected &&
         previous !== document.body &&
-        previous.tagName !== 'CANVAS'
+        previous.tagName !== 'CANVAS' &&
+        !previous.closest('dialog')
       ) {
-        previous.focus()
+        previous.focus({ preventScroll: true })
       } else {
         document
           .getElementById(
             `project-control-${selected}`
           )
-          ?.focus()
+          ?.focus({ preventScroll: true })
       }
     }
   }, [selected])
@@ -187,10 +195,16 @@ export function ProjectDialog({
   return (
     <dialog
       ref={ref}
-      className="upcoming-dialog project-dialog"
+      className="upcoming-dialog project-dialog" data-project={selected}
       aria-labelledby="project-title"
       aria-describedby="project-description"
       onCancel={onClose}
+      onKeyDown={event => {
+        if (event.key !== 'Escape') return
+        event.preventDefault()
+        event.stopPropagation()
+        onClose()
+      }}
       onClick={event => {
         if (event.target === event.currentTarget) {
           onClose()
@@ -228,6 +242,8 @@ export function ProjectDialog({
         ))}
       </ul>
 
+      {project && <ProjectGallery key={project.id} project={project} />}
+
       <h3>Key features</h3>
 
       <ul className="project-features">
@@ -238,7 +254,9 @@ export function ProjectDialog({
         ))}
       </ul>
 
-      <h3>My contribution</h3>
+      <h3>
+        {project?.id === 'landhub' ? 'Project context' : 'My contribution'}
+      </h3>
 
       <p>{project?.contribution}</p>
 
@@ -246,14 +264,6 @@ export function ProjectDialog({
 
       <p>{project?.status}</p>
 
-      {project?.gallery.map(image => (
-        <img
-          key={image.src}
-          src={image.src}
-          alt={image.alt}
-          loading="lazy"
-        />
-      ))}
 
       {links.length > 0 && (
         <div className="project-links">
