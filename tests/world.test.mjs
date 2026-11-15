@@ -95,12 +95,69 @@ test('Projects extends the journey without changing Skills endpoints', () => {
   assert.deepEqual(curve.getPoint(1).toArray(),[...shot.projects])
  }
 })
-test('Current project data preserves the configured portfolio and unconfigured links', async () => {
+test('Seven project records preserve existing IDs, gallery assets and unconfigured links', async () => {
  const {projects}=await sourceModule('../src/config/projects.ts')
- assert.deepEqual(projects.map(p=>p.id),['gym-management','food-ordering-web','ctms','ai-clothing-shop','ageios-ai','food-ordering-mobile'])
- for(const p of projects){assert.ok(p.title&&p.description&&p.contribution&&p.status);assert.equal(p.github,'');assert.equal(p.demo,'');assert.deepEqual(p.gallery,[])}
+ assert.deepEqual(projects.map(p=>p.id),['gym-management','food-ordering-web','ctms','ai-clothing-shop','ageios-ai','food-ordering-mobile','landhub'])
+ assert.equal(projects.length,7)
+ for(const p of projects){assert.ok(p.title&&p.description&&p.contribution&&p.status);assert.equal(p.github,'');assert.equal(p.demo,'');assert.equal(p.gallery.length,3)}
+ const gym=projects.find(p=>p.id==='gym-management')
+ assert.deepEqual(gym.gallery.map(image=>image.src),['cover.webp','showcase-2.webp','showcase-3.webp'].map(name=>`/projects/gym-management/${name}`))
+ const food=projects.find(p=>p.id==='food-ordering-web')
+ assert.deepEqual(food.gallery.map(image=>image.src),['/projects/food-ordering-web/cover.webp','/projects/food-ordering-web/showcase-2.webp','/projects/food-ordering-web/showcase-3.webp'])
+ const ctms=projects.find(p=>p.id==='ctms')
+ assert.deepEqual(ctms.gallery.map(image=>image.src),['/projects/ctms/cover.webp','/projects/ctms/showcase-2.webp','/projects/ctms/showcase-3.webp'])
+ assert.match(ctms.description,/after confirmation/ )
+ const clothing=projects.find(p=>p.id==='ai-clothing-shop')
+ assert.deepEqual(clothing.gallery.map(image=>image.src),['/projects/ai-clothing-shop/cover.webp','/projects/ai-clothing-shop/showcase-2.webp','/projects/ai-clothing-shop/showcase-3.webp'])
+ const ageios=projects.find(p=>p.id==='ageios-ai')
+ assert.deepEqual(ageios.gallery.map(image=>image.src),['/projects/ageios-ai/cover.webp','/projects/ageios-ai/showcase-2.webp','/projects/ageios-ai/showcase-3.webp'])
+ for(const image of ageios.gallery)assert.match(image.caption,/unverified/ )
+ const mobile=projects.find(p=>p.id==='food-ordering-mobile')
+ assert.deepEqual(mobile.gallery.map(image=>image.src),['/projects/food-ordering-mobile/cover.webp','/projects/food-ordering-mobile/showcase-2.webp','/projects/food-ordering-mobile/showcase-3.webp'])
+ for(const image of mobile.gallery)assert.equal(image.portrait,false)
+ const landhub=projects.find(p=>p.id==='landhub')
+ assert.equal(landhub.title,'LandHub — Land Sales & Property Management')
+ assert.match(landhub.description,/collaborative university project/)
+ assert.match(landhub.description,/Java 21.*Spring Boot 3.*MySQL.*Thymeleaf/)
+ assert.match(landhub.contribution,/Collaborative university group project/)
+ assert.equal(landhub.status,'Ongoing university group project')
+ assert.equal(landhub.github,'')
+ assert.equal(landhub.demo,'')
+ assert.deepEqual(landhub.gallery.map(image=>image.src),['/projects/landhub/cover.webp','/projects/landhub/showcase-2.webp','/projects/landhub/showcase-3.webp'])
+ for(const image of landhub.gallery)assert.equal(image.concept,true)
+ const allImages=projects.flatMap(project=>project.gallery)
+ assert.equal(allImages.length,21)
+ for(const image of allImages){
+  assert.equal(image.concept,true)
+  assert.match(image.alt,/AI-generated/)
+  const bytes=await fs.readFile(new URL(`../public${image.src}`,import.meta.url))
+  assert.equal(bytes.toString('ascii',0,4),'RIFF')
+  assert.equal(bytes.toString('ascii',8,12),'WEBP')
+ }
  assert.deepEqual(projects.find(p=>p.id==='ageios-ai').technologies,[])
  assert.match(projects.find(p=>p.id==='ageios-ai').description,/confirmed/)
+})
+
+test('All project islands use their configured IDs for selection and navigation', async () => {
+ const {projects}=await sourceModule('../src/config/projects.ts')
+ const scene=await fs.readFile(new URL('../src/scenes/ProjectsScene/ProjectsScene.tsx',import.meta.url),'utf8')
+ assert.equal(projects.some(project=>project.id==='landhub'),true)
+ assert.match(scene,/projects\.map\(\(project, index\) =>/)
+ assert.match(scene,/selected=\{selected === project\.id\}/)
+ assert.match(scene,/onSelect=\{onSelect\}/)
+ assert.match(scene,/onSelect\(project\.id\)/)
+})
+
+test('Project gallery navigation wraps correctly for zero, one, three and five images', async () => {
+ const {getNextGalleryIndex}=await sourceModule('../src/utils/projectGallery.ts')
+ assert.equal(getNextGalleryIndex(0,1,0),0)
+ assert.equal(getNextGalleryIndex(0,-1,1),0)
+ assert.equal(getNextGalleryIndex(0,-1,3),2)
+ assert.equal(getNextGalleryIndex(2,1,3),0)
+ assert.equal(getNextGalleryIndex(1,1,3),2)
+ assert.equal(getNextGalleryIndex(0,-1,5),4)
+ assert.equal(getNextGalleryIndex(4,1,5),0)
+ assert.equal(getNextGalleryIndex(2,1,5),3)
 })
 
 test('Journey is reachable in both directions without extending the Projects stage', () => {
@@ -134,6 +191,7 @@ test('Six narrative milestones preserve project references and omit unconfirmed 
   for(const id of [...(m.relatedProjects??[]),...(m.relatedProject?[m.relatedProject]:[])])assert.ok(projects.some(p=>p.id===id))
  }
  assert.deepEqual(milestones.map(m=>m.id),['beginning','foundations','applications','intelligence','systems','ahead'])
+ assert.deepEqual(milestones[1].relatedProjects,['landhub'])
  assert.match(milestones[2].description,/MERN/)
  assert.deepEqual(milestones[2].relatedProjects,['gym-management','food-ordering-web','ctms'])
  assert.deepEqual(milestones[3].relatedProjects,['ai-clothing-shop','ageios-ai'])
